@@ -1,9 +1,12 @@
 import pulumi_aws as aws
+import zipfile
 from lib.helpers import jinja_to_json
 
-def create_the_lambda(iac_admin_ropts):
+def example_1(iac_admin_ropts):
+    zipfile.ZipFile('lambda.zip', mode='w').write("scripts/example_1/handler.rb")
+    
     lambda_role_assumer_policy = jinja_to_json(
-        template_path = 'policies/lambda_role_assumer.jinja2',
+        template_path = 'policies/example_1/lambda_role_assumer.j2',
         data = {
             "lambda_service":"lambda.amazonaws.com"
         })
@@ -14,7 +17,7 @@ def create_the_lambda(iac_admin_ropts):
         assume_role_policy = lambda_role_assumer_policy, 
         opts = iac_admin_ropts)
 
-    lambda_role_attachment = aws.iam.RolePolicyAttachment("test-attach",
+    lambda_role_attachment = aws.iam.RolePolicyAttachment("ex1_lambda_policy_attach",
         policy_arn = lambda_role_operator_policy_arn,
         role = lambda_role.name,
         opts = iac_admin_ropts)
